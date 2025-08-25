@@ -161,3 +161,7 @@ start = perspective(userPoint, point1, camDirection)
 end = perspective(userPoint, point2, camDirection)
 return start, end
 ```
+
+
+## EDITS!!
+I have started working on a backend to make sprites easier! I decided to use node.js so I can learn js in the process. It is still in the working stages but I thought I'd share!
