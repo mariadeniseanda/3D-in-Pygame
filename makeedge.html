@@ -1,0 +1,115 @@
+<style>
+    html, body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+    table {
+        width: 100%;
+        height: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+}
+    td {
+        padding: 0;
+        margin: 0;
+        width: calc(100% / 52);  /* 50 columns, adjust as needed */
+        height: calc(100% / 37); /* 37 rows, adjust as needed */
+        box-sizing: border-box;
+}
+    #wrapper {
+    display: grid;
+    grid-template-areas:
+        'p t';
+    grid-template-rows: 100vh;
+    grid-template-columns: 80vw 20vw;
+
+}
+
+    #tab{
+        display: grid;
+        grid-template-areas:
+            'h'
+            'l'
+            'b';
+        grid-template-rows: 10vh 80vh 10vh;
+        grid-template-columns: 20vw;
+    }
+</style>
+
+<body>
+    <div id="wrapper">
+        <div id="plane" style="grid-area: p;max-width: 80vw;display: flex;margin: 0%;max-height: 100vh;padding: 0%;">
+            <form method="POST" action="/pointsave">
+                <table>
+                    <% for(let row=0; row<37; row++) { %>
+                    <tr>
+                        <% for(let col=0; col<52; col++) { %>
+                        <td>
+                            <% if (selectpoint.some(p => { const arr = JSON.parse(p); return arr[0] === row && arr[1] === col; })) { %>
+                                <label style="background-color: yellow; display: block; width: 100%; height: 100%;">
+                                    <input type="radio" name="points" value="[<%= row %>,<%= col %>]" checked>
+                                </label>
+                            <% } else if (points.some(p => { const arr = JSON.parse(p); return arr[0] === row && arr[1] === col; })) { %>
+                                <label style="background-color: blue; display: block; width: 100%; height: 100%;">
+                                    <input type="radio" name="points" value="[<%= row %>,<%= col %>]" >
+                                </label>
+                            <% } else if (afterpoints.some(p => { const arr = JSON.parse(p); return arr[0] === row && arr[1] === col; })) { %>
+                                <label style="background-color: green; display: block; width: 100%; height: 100%;">
+                                    <input type="radio" name="points" value="[<%= row %>,<%= col %>]"disabled>
+                                </label>
+                            <% } else if (behindpoints.some(p => { const arr = JSON.parse(p); return arr[0] === row && arr[1] === col; })) { %>
+                                <label style="background-color: red; display: block; width: 100%; height: 100%;">
+                                    <input type="radio" name="points" value="[<%= row %>,<%= col %>]"disabled>
+                                </label>
+                            <% } else { %>
+                                <label style="background-color: white; display: block; width: 100%; height: 100%;">
+                                    <input type="radio" name="points" value="[<%= row %>,<%= col %>]" disabled>
+                                </label>
+                            <% } %>
+                        </td>
+                        <% } %>
+                    </tr>
+                    <% } %>
+                </table>
+                <input type="hidden" name="layer" value="<%= layer %>">
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div id="tab" style="grid-area: t;margin: 0%;max-height: 100vh;padding: 0%;">
+            <div id="header" style="grid-area: h;">
+                <h2>Layer <%= layer %> <%= selectpoint %> </h2> </div>
+            <div id="layers" style="grid-area: l;">
+                <% for (var key in newVetex) { %>
+                    <% if (String(key) === String(layer)) { %>
+                        <input type="submit" value="Z = <%= key %>">
+                    <% } else { %>
+                        <form action="/makeedge" method="GET">
+                            <input type="hidden" name="layer" value="<%= key %>">
+                            <input type="submit" value="Z = <%= key %>">
+                        </form>
+                    <% } %>
+                <% } %>
+
+                <p><%= newEdges %></p>
+
+            </div>
+            <div id="bottom" style="grid-area: b;">
+                <form action="/nextlayer" method="POST">
+                    <input type="hidden" name="layer" value="<%= layer %>">
+                    <input type="number" name="height" value="1" min="1" aria-label="added z-value">
+                    <input type="submit" value="Next Layer">
+                </form>
+                <form action="/makeedge" method="POST">
+                    <input type="submit" value="Make Edge">
+                </form>
+                <form action="/saveall" method="POST">
+                    <input type="submit" value="Save All">
+                </form>
+        </div>
+
+    </div>
+</body>
