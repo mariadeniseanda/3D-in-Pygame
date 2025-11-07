@@ -70,6 +70,7 @@ app.post("/createnew", (req, res) => {
   });
 });
 
+// layer lookup
 app.get("/addnew", (req, res) => {
   let layer = parseInt(req.query.layer ?? 0, 10);
   if (!newVetex[layer]) newVetex[layer] = [];
@@ -77,12 +78,15 @@ app.get("/addnew", (req, res) => {
   const layers = getSortedLayers();
   const currentIndex = layers.indexOf(layer);
 
+  const behindLayer = layers[currentIndex - 1];
+  const afterLayer = layers[currentIndex + 1];
+
   res.render("addnew.html", {
     sprite: newSprite,
     layer,
-    behindpoints: newVetex[layers[currentIndex - 1]] || [],
-    points: newVetex[layer] || [],
-    afterpoints: newVetex[layers[currentIndex + 1]] || [],
+    behindpoints: behindLayer !== undefined ? newVetex[behindLayer] : [],
+    points: newVetex[layer],
+    afterpoints: afterLayer !== undefined ? newVetex[afterLayer] : [],
     newVetex
   });
 });
@@ -105,17 +109,21 @@ app.post("/nextlayer", (req, res) => {
   res.redirect(`/addnew?layer=${encodeURIComponent(nextLayer)}`);
 });
 
+//layer lookup for edge-making
 app.get("/makeedge", (req, res) => {
   let layer = parseInt(req.query.layer ?? 0, 10);
   const layers = getSortedLayers();
   const currentIndex = layers.indexOf(layer);
 
+  const behindLayer = layers[currentIndex - 1];
+  const afterLayer = layers[currentIndex + 1];
+
   res.render("makeedge.html", {
     sprite: newSprite,
     layer,
-    behindpoints: newVetex[layers[currentIndex - 1]] || [],
+    behindpoints: behindLayer !== undefined ? newVetex[behindLayer] : [],
     points: newVetex[layer] || [],
-    afterpoints: newVetex[layers[currentIndex + 1]] || [],
+    afterpoints: afterLayer !== undefined ? newVetex[afterLayer] : [],
     newVetex,
     selectpoint: tempPoint[layer] || [],
     newEdges
