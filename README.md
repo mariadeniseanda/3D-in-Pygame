@@ -165,3 +165,4 @@ return start, end
 
 ## EDITS!!
 I have started working on a backend to make sprites easier! I decided to use node.js so I can learn js in the process. It is still in the working stages but I thought I'd share!
+-note the the html files must be in a folder name *views*
